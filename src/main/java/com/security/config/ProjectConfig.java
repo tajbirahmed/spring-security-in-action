@@ -17,8 +17,25 @@ import javax.sql.DataSource;
 public class ProjectConfig {
 
     @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http.httpBasic(
+                Customizer.withDefaults()
+        );
+        http.authorizeHttpRequests(
+                c -> c.anyRequest().authenticated()
+        );
+        return http.build();
+    }
+
+    @Bean
     public UserDetailsService userDetailsService(DataSource dataSource) {
-        return new JdbcUserDetailsManager(dataSource);
+
+        String userByUsernameQuery = "select username, password, enabled from spring.users where username = ?";
+        String authsByUserQuery = "select username, authority from spring.authorities where username = ?";
+        var userDetailsManager = new JdbcUserDetailsManager(dataSource);
+        userDetailsManager.setUsersByUsernameQuery(userByUsernameQuery);
+        userDetailsManager.setAuthoritiesByUsernameQuery(authsByUserQuery);
+        return userDetailsManager;
     }
 
     @Bean
@@ -26,13 +43,6 @@ public class ProjectConfig {
         return NoOpPasswordEncoder.getInstance();
     }
 
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.httpBasic(Customizer.withDefaults());
-        http.authorizeHttpRequests(
-                c -> c.anyRequest().authenticated()
-        );
-        return http.build();
-    }
+
 
 }
