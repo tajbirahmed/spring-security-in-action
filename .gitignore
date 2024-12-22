@@ -33,3 +33,6 @@ build/
 .vscode/
 .idea/
 .mvn/
+/src/main/resources/secrets.yaml
+/src/main/resources/data.sql
+
