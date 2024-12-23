@@ -1,0 +1,21 @@
+spring:
+  config:
+    import: 'optional:classpath:secrets.yaml'
+  application:
+    name: security
+  datasource:
+    url: ${secrets.datasource.url}
+    username: ${secrets.datasource.username}
+    password: ${secrets.datasource.password}
+  sql:
+    init:
+      mode: always
+
+server:
+  port: 8080
+
+logging:
+  level:
+    org:
+      springframework:
+        jdbc: DEBUG
